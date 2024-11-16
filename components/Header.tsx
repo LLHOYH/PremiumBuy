@@ -2,6 +2,7 @@ import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useConnect } from "wagmi";
 import { injected } from "wagmi/connectors";
@@ -9,6 +10,7 @@ import { injected } from "wagmi/connectors";
 export default function Header() {
   const [hideConnectBtn, setHideConnectBtn] = useState(false);
   const { connect } = useConnect();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (window.ethereum && window.ethereum.isMiniPay) {
@@ -18,7 +20,7 @@ export default function Header() {
   }, []);
 
   return (
-    <Disclosure as="nav" className="bg-colors-primary border-b border-black">
+    <Disclosure as="nav" className="bg-purple-200 ">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -44,16 +46,16 @@ export default function Header() {
                     alt="Celo Logo"
                   />
                 </div> */}
-                <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <div className="hidden sm:ml-6 sm:flex sm:space-x-8 text-white">
                   <a
-                    href="#"
-                    className="inline-flex items-center border-b-2 border-black px-1 pt-1 text-sm font-medium text-gray-900"
+                    href="/"
+                    className={`inline-flex items-center ${pathname==='/' ? ' border-b-2 border-black':''} px-1 pt-1 text-sm font-medium text-purple-900`}
                   >
                     Home
                   </a>
                   <a
                     href="/countdown"
-                    className="inline-flex items-center border-b-2 border-black px-1 pt-1 text-sm font-medium text-gray-900"
+                    className={`inline-flex items-center ${pathname==='/countdown' ? ' border-b-2 border-black':''} px-1 pt-1 text-sm font-medium text-purple-900`}
                   >
                     Claim
                   </a>
@@ -76,7 +78,7 @@ export default function Header() {
             <div className="space-y-1 pt-2 pb-4">
               <Disclosure.Button
                 as="a"
-                href="#"
+                href="/"
                 className="block border-l-4 border-black py-2 pl-3 pr-4 text-base font-medium text-black"
               >
                 Home

@@ -1,13 +1,78 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
 import { Sparkles, Gift, PartyPopper } from 'lucide-react';
 import { Card } from './ui/card';
+import { Address, createWalletClient, custom } from 'viem';
+import { celoAlfajores } from 'viem/chains';
+
+  
+const LOTTERY_ABI = [
+  {
+    "inputs": [],
+    "name": "claimPrize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
+
+const LOTTERY_CONTRACT_ADDRESS = "YOUR_CONTRACT_ADDRESS" as Address;
+
+
 
 const WinnerAnnouncement = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isClaimLoading, setIsClaimLoading] = useState(false);
+  const [claimError, setClaimError] = useState("");
+  const [claimSuccess, setClaimSuccess] = useState(false);
+  const [txHash, setTxHash] = useState("");
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+
+  const handleClaimPrize = async () => {
+    if (!window.ethereum) {
+      setClaimError("Please install a Web3 wallet");
+      return;
+    }
+
+    try {
+      setIsClaimLoading(true);
+      setClaimError("");
+
+      const walletClient = createWalletClient({
+        transport: custom(window.ethereum),
+        chain: celoAlfajores
+      });
+
+      const [address] = await walletClient.getAddresses();
+
+      const tx = await walletClient.writeContract({
+        address: LOTTERY_CONTRACT_ADDRESS,
+        abi: LOTTERY_ABI,
+        functionName: 'claimPrize',
+        account: address,
+      });
+
+      setTxHash(tx);
+      setClaimSuccess(true);
+
+    } catch (error: unknown) {
+      console.error('Error claiming prize:', error);
+      if (error instanceof Error) {
+        setClaimError(error.message);
+      } else if (typeof error === 'string') {
+        setClaimError(error);
+      } else {
+        setClaimError("Failed to claim prize. Please try again.");
+      }
+    } finally {
+      setIsClaimLoading(false);
+    }
+  };
 
   return (
     <Card className="bg-gradient-to-b from-yellow-100 to-amber-100 flex items-center justify-center p-4">
@@ -37,14 +102,12 @@ const WinnerAnnouncement = () => {
             </p>
           </div>
 
-          {/* Prize Amount */}
           <div className="text-3xl font-bold text-amber-600 mb-8">
             0.01 ETH
           </div>
 
-          {/* Claim Button */}
           <button
-            onClick={() => {/* Add your claim function here */}}
+            onClick={handleClaimPrize}
             className="group relative overflow-hidden rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 px-8 py-3 text-white transform transition-all hover:scale-105 active:scale-95"
           >
             <div className="relative flex items-center justify-center gap-2">
@@ -57,13 +120,11 @@ const WinnerAnnouncement = () => {
             </div>
           </button>
 
-          {/* Additional Info */}
           <p className="mt-6 text-sm text-amber-700">
             Please claim your prize within 90 days
           </p>
         </div>
 
-        {/* Decorative Elements */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
           {[...Array(20)].map((_, i) => (
             <div

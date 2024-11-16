@@ -85,7 +85,7 @@ export default function Home() {
 
 
     return (
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center py-16">
             {!address && (
                 <div className="h1">Please install Metamask and connect.</div>
             )}
