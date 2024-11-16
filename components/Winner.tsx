@@ -67,7 +67,7 @@ const WinnerAnnouncement = ({winnerTicket}:{winnerTicket:string}) => {
       setClaimError("");
 
       const round_number=1;
-      const reward_level=1;
+      const reward_level=2;
       const merkle_proof = [
         "0x0000000000000000000000000000000000000000000000000000000000000000"
       ] as Hex[];
