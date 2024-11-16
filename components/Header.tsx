@@ -51,6 +51,12 @@ export default function Header() {
                   >
                     Home
                   </a>
+                  <a
+                    href="/countdown"
+                    className="inline-flex items-center border-b-2 border-black px-1 pt-1 text-sm font-medium text-gray-900"
+                  >
+                    Claim
+                  </a>
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
