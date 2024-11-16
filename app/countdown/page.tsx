@@ -124,7 +124,7 @@ const CountdownPage = () => {
             <CardContent className="pt-6">
               <h3 className="text-xl font-semibold text-purple-900 mb-4">Prize Pool</h3>
               <div className="text-3xl font-bold text-purple-600">$1,000,000</div>
-              <p className="text-sm text-purple-500 mt-2">Don't miss your chance to win!</p>
+              <p className="text-sm text-purple-500 mt-2">Don&apos;t miss your chance to win!</p>
             </CardContent>
           </Card>
         </div>

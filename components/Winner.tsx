@@ -33,7 +33,7 @@ const WinnerAnnouncement = () => {
               Hey! You are the winner!
             </div>
             <p className="text-amber-700">
-              You've won the grand prize in our lottery draw!
+              You&apos;ve won the grand prize in our lottery draw!
             </p>
           </div>
 
