@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useWeb3 } from "@/contexts/useWeb3";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -95,14 +96,14 @@ export default function Home() {
                 </div>
             )}
 
-            <a
+            <Link
                 href="https://faucet.celo.org/alfajores"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 mb-4 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
                 Get Test Tokens
-            </a>
+            </Link>
 
             {address && (
                 <>
@@ -113,14 +114,14 @@ export default function Home() {
                     {tx && (
                         <p className="font-bold mt-4">
                             Tx Completed:{" "}
-                            <a
+                            <Link
                                 href={`https://alfajores.celoscan.io/tx/${tx.transactionHash}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-blue-600 underline"
                             >
                                 {tx.transactionHash.substring(0, 6)}...{tx.transactionHash.substring(tx.transactionHash.length - 6)}
-                            </a>
+                            </Link>
                         </p>
                     )}
                     <div className="w-full px-3 mt-7">
