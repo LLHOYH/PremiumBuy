@@ -6,12 +6,18 @@ import { Timer, Calendar, Clock, FastForward } from 'lucide-react';
 import WinnerAnnouncement from '@/components/Winner';
 import { DateTimeDisplay } from '@/components/DatetimeDisplay';
 import { Button } from '@/components/ui/button';
+import { useAccount, useChainId } from 'wagmi';
+import { getNameByChain } from '@/utils/chainaddress';
+import TicketDisplay from '@/components/TicketDisplay';
 
 const CountdownPage = () => {
-  const [drawingDate, setDrawingDate] = useState(new Date('2024-11-16T20:06:00'));
+  const [drawingDate, setDrawingDate] = useState(new Date('2024-11-17T20:06:00'));
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
   const [isDrawing, setIsDrawing] = useState(false);
- 
+  const { address: userAddress, isConnected } = useAccount();
+  const chainId=useChainId();
+  const [ticketNumber, setTicketNumber] = useState('')
+  
   function calculateTimeLeft() {
     const now = new Date().getTime();
     const difference = drawingDate.getTime() - now;
@@ -52,6 +58,17 @@ const CountdownPage = () => {
 
     return () => clearInterval(timer);
   }, [drawingDate]); 
+
+  useEffect(()=>{
+    async function getTicket(){
+      const res = await fetch(`https://testbk-zeta.vercel.app/api/lottery/latest?mode=${getNameByChain(chainId)}&fromAddress=${userAddress}`)
+
+      const data =await res.json();
+      if(data && data.data?.lotteryNumber) setTicketNumber(data.data?.lotteryNumber)
+    }
+
+    if(userAddress) getTicket();
+  },[])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-100 to-pink-100 py-12 px-4 flex justify-center">
@@ -94,11 +111,14 @@ const CountdownPage = () => {
           </div>
         )}
 
+      {
+        userAddress && ticketNumber && <TicketDisplay  ticketNumbers={ticketNumber}/>
+      }
         <div className="text-center">
           <Card className="bg-white/90 backdrop-blur-sm">
             <CardContent className="pt-6">
               <h3 className="text-xl font-semibold text-purple-900 mb-4">Prize Pool</h3>
-              <div className="text-3xl font-bold text-purple-600">0.01ETH</div>
+              <div className="text-3xl font-bold text-purple-600">1 USDC</div>
               <p className="text-sm text-purple-500 mt-2">Don&apos;t miss your chance to win!</p>
             </CardContent>
           </Card>

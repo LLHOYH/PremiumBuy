@@ -3,23 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { Sparkles, Gift, PartyPopper } from 'lucide-react';
 import { Card } from './ui/card';
-import { Address, createWalletClient, custom } from 'viem';
+import { Address, createWalletClient, custom, Hex, pad } from 'viem';
 import { celoAlfajores } from 'viem/chains';
+import { useChainId, useChains,useAccount, useWriteContract } from 'wagmi'; // Add this import
 
+import abi from '../utils/lotteryABI.json'
+import { getContractByChain } from '@/utils/chainaddress';
   
-const LOTTERY_ABI = [
-  {
-    "inputs": [],
-    "name": "claimPrize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-];
-
-const LOTTERY_CONTRACT_ADDRESS = "YOUR_CONTRACT_ADDRESS" as Address;
-
-
+const LOTTERY_ABI = abi;
 
 const WinnerAnnouncement = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -27,38 +18,67 @@ const WinnerAnnouncement = () => {
   const [claimError, setClaimError] = useState("");
   const [claimSuccess, setClaimSuccess] = useState(false);
   const [txHash, setTxHash] = useState("");
+  const chains = useChains(); // Much simpler!
+  const chainId=useChainId();
+  const { address: userAddress, isConnected } = useAccount(); // Get wallet connection status and address
+  const { data:hash, writeContract, isPending, error: writeError ,isSuccess} = useWriteContract();
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
+  useEffect(()=>{
+    console.log(hash)
+  },[hash])
+  useEffect(() => {
+    console.log('error ',writeError)
+    if (writeError) {
+      setClaimError(writeError.message);
+    }
+  }, [writeError]);
+
+  useEffect(() => {
+    console.log('success ',isSuccess)
+    if (isSuccess) {
+      setClaimSuccess(true);
+    }
+  }, [isSuccess]);
 
   const handleClaimPrize = async () => {
     if (!window.ethereum) {
       setClaimError("Please install a Web3 wallet");
       return;
     }
+    const currentChain=chains.find(c=>c.id===chainId);
 
+    if(!currentChain) return;
+
+    const token_contract=getContractByChain(chainId) as Address;
+
+    console.log(currentChain)
+    console.log(chainId)
     try {
       setIsClaimLoading(true);
       setClaimError("");
 
-      const walletClient = createWalletClient({
-        transport: custom(window.ethereum),
-        chain: celoAlfajores
-      });
-
-      const [address] = await walletClient.getAddresses();
-
-      const tx = await walletClient.writeContract({
-        address: LOTTERY_CONTRACT_ADDRESS,
+      const round_number=1;
+      const reward_level=1;
+      const merkle_proof = [
+        "0x0000000000000000000000000000000000000000000000000000000000000000"
+      ] as Hex[];
+      
+      const result = await writeContract({
+        address: token_contract,
         abi: LOTTERY_ABI,
-        functionName: 'claimPrize',
-        account: address,
+        functionName: 'claimReward',
+        args: [
+          BigInt(round_number),
+          BigInt(reward_level),
+          merkle_proof
+        ],
       });
 
-      setTxHash(tx);
-      setClaimSuccess(true);
+      console.log("Transaction result:", result);
 
     } catch (error: unknown) {
       console.error('Error claiming prize:', error);
@@ -103,7 +123,7 @@ const WinnerAnnouncement = () => {
           </div>
 
           <div className="text-3xl font-bold text-amber-600 mb-8">
-            0.01 ETH
+            1 USDC
           </div>
 
           <button

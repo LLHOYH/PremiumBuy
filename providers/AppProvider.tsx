@@ -1,6 +1,7 @@
 'use client';
 
 import '@rainbow-me/rainbowkit/styles.css';
+import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
@@ -8,16 +9,31 @@ import {
   connectorsForWallets,
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider, createConfig, http } from 'wagmi';
-import { celo, celoAlfajores } from 'wagmi/chains';
+import { base, baseSepolia, celo, celoAlfajores } from 'wagmi/chains';
 
 import Layout from '../components/Layout';
-import { injectedWallet } from '@rainbow-me/rainbowkit/wallets';
+import {
+  injectedWallet,
+  walletConnectWallet,
+  coinbaseWallet,
+  metaMaskWallet,
+  trustWallet,
+} from '@rainbow-me/rainbowkit/wallets';
+
+import { IWeb3AuthCoreOptions, WEB3AUTH_NETWORK } from '@web3auth/base';
+import { Web3AuthNoModal } from '@web3auth/no-modal';
+import { AuthAdapter } from "@web3auth/auth-adapter";
 
 const connectors = connectorsForWallets(
   [
     {
       groupName: 'Recommended',
-      wallets: [injectedWallet],
+      wallets: [
+        metaMaskWallet,
+        injectedWallet,
+        walletConnectWallet,
+        coinbaseWallet,
+        trustWallet,],
     },
   ],
   {
@@ -28,11 +44,14 @@ const connectors = connectorsForWallets(
 
 const config = createConfig({
   connectors,
-  chains: [celo, celoAlfajores],
+  chains: [celo, celoAlfajores, base, baseSepolia],
   transports: {
     [celo.id]: http(),
     [celoAlfajores.id]: http(),
+    [base.id]: http(),
+    [baseSepolia.id]: http(),
   },
+  syncConnectedChain: true, // Add this if not present
 });
 
 const queryClient = new QueryClient();
