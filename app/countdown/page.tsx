@@ -9,15 +9,18 @@ import { Button } from '@/components/ui/button';
 import { useAccount, useChainId } from 'wagmi';
 import { getNameByChain } from '@/utils/chainaddress';
 import TicketDisplay from '@/components/TicketDisplay';
+import Fireworks from '@/components/Fireworks';
 
 const CountdownPage = () => {
-  const [drawingDate, setDrawingDate] = useState(new Date('2024-11-17T20:06:00'));
+  const [drawingDate, setDrawingDate] = useState(new Date('2024-11-18T13:00:00'));
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
   const [isDrawing, setIsDrawing] = useState(false);
   const { address: userAddress, isConnected } = useAccount();
   const chainId=useChainId();
   const [ticketNumber, setTicketNumber] = useState('')
-  
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [winnerTicker, setWinnerTicket]=useState('')
+
   function calculateTimeLeft() {
     const now = new Date().getTime();
     const difference = drawingDate.getTime() - now;
@@ -39,8 +42,26 @@ const CountdownPage = () => {
     };
   }
 
+  const generateAlternateTicket = (originalTicket: string) => {
+    if (!originalTicket) return '';
+    
+    const numbers = originalTicket.split(',');
+    if (numbers.length !== 3) return '';
+  
+    // Keep first two numbers
+    const firstTwo = numbers.slice(0, 2);
+    
+    // Generate a different third number (1-9)
+    let newThirdNumber;
+    do {
+      newThirdNumber = Math.floor(Math.random() * 9) + 1; // 1-9
+    } while (newThirdNumber === parseInt(numbers[2]));
+  
+    return [...firstTwo, newThirdNumber].join(',');
+  };
+
   const handleFastForward = () => {
-    const newDate = new Date(Date.now() + 10000);
+    const newDate = new Date(Date.now() + 6000);
     setDrawingDate(newDate);
     setTimeLeft(calculateTimeLeft());
   };
@@ -52,6 +73,9 @@ const CountdownPage = () => {
       
       if (Object.values(updatedTime).every(value => value === 0)) {
         setIsDrawing(true);
+        setShowCelebration(true);
+        // Hide celebration after 5 seconds
+        setTimeout(() => setShowCelebration(false), 5000);
         clearInterval(timer);
       }
     }, 1000);
@@ -64,11 +88,19 @@ const CountdownPage = () => {
       const res = await fetch(`https://testbk-zeta.vercel.app/api/lottery/latest?mode=${getNameByChain(chainId)}&fromAddress=${userAddress}`)
 
       const data =await res.json();
+      console.log(data)
       if(data && data.data?.lotteryNumber) setTicketNumber(data.data?.lotteryNumber)
     }
 
     if(userAddress) getTicket();
   },[])
+
+  useEffect(()=>{
+    if(ticketNumber){
+      const winner=generateAlternateTicket(ticketNumber)
+      setWinnerTicket(winner);
+    }
+  },[ticketNumber])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-100 to-pink-100 py-12 px-4 flex justify-center">
@@ -78,7 +110,7 @@ const CountdownPage = () => {
           <DateTimeDisplay drawingDate={drawingDate} />
         </div>
 
-        {isDrawing && <WinnerAnnouncement/> }
+        {isDrawing && <WinnerAnnouncement winnerTicket={winnerTicker}/> }
 
         {isDrawing ? (
           <Card className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">

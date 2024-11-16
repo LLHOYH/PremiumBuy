@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Ticket } from 'lucide-react';
 
 const TicketDisplay = ({ ticketNumbers }:{ticketNumbers:string}) => {
-  // If no ticket numbers provided, return null or a message
+
   if (!ticketNumbers) {
     return (
       <Card className="bg-white/80 backdrop-blur-sm">
@@ -17,7 +17,6 @@ const TicketDisplay = ({ ticketNumbers }:{ticketNumbers:string}) => {
     );
   }
 
-  // Split the ticket string into an array of numbers
   const numbers = ticketNumbers.split(',').map(num => num.trim());
 
   return (
