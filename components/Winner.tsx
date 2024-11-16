@@ -141,7 +141,7 @@ const WinnerAnnouncement = ({winnerTicket}:{winnerTicket:string}) => {
           </CardContent>
       }
           <div className="text-3xl font-bold text-amber-600 mb-8">
-            1 USDC
+            6 usdc
           </div>
 
           <button

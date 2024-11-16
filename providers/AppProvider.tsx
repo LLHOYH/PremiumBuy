@@ -9,7 +9,7 @@ import {
   connectorsForWallets,
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider, createConfig, http } from 'wagmi';
-import { base, baseSepolia, celo, celoAlfajores } from 'wagmi/chains';
+import { base, baseSepolia, celo, celoAlfajores, flowMainnet, flowTestnet, morphHolesky } from 'wagmi/chains';
 
 import Layout from '../components/Layout';
 import {
@@ -18,6 +18,7 @@ import {
   coinbaseWallet,
   metaMaskWallet,
   trustWallet,
+  imTokenWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 
 import { IWeb3AuthCoreOptions, WEB3AUTH_NETWORK } from '@web3auth/base';
@@ -33,25 +34,29 @@ const connectors = connectorsForWallets(
         injectedWallet,
         walletConnectWallet,
         coinbaseWallet,
-        trustWallet,],
+        trustWallet,
+        imTokenWallet
+      ],
     },
   ],
   {
-    appName: 'Celo Composer',
+    appName: 'Premium Buy',
     projectId: process.env.WC_PROJECT_ID ?? '044601f65212332475a09bc14ceb3c34',
   }
 );
 
 const config = createConfig({
   connectors,
-  chains: [celo, celoAlfajores, base, baseSepolia],
+  chains: [celo, celoAlfajores, base, baseSepolia, flowTestnet, morphHolesky],
   transports: {
     [celo.id]: http(),
     [celoAlfajores.id]: http(),
     [base.id]: http(),
     [baseSepolia.id]: http(),
+    [flowTestnet.id]:http(),
+    [morphHolesky.id]:http()
   },
-  syncConnectedChain: true, // Add this if not present
+  syncConnectedChain: true,
 });
 
 const queryClient = new QueryClient();
