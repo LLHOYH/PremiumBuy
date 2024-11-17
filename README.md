@@ -6,6 +6,13 @@ PremiumBuy is a Payment, Checkout & Rewards all in one service, that serves any 
 Built using Celo-Composer template starter kit with Tailwindcss.
 Next.js, Wagmi, Viem,
 
+# Other repos linked with this project
+[🔗 Point of sale machine app](https://github.com/diandiandiandedian/premiumBuy)
+<br/>
+[🔗 Smart contract](https://github.com/yangyaczz/RandomCashBack)
+<br/>
+[🔗 Backend](https://github.com/yangyaczz/BCBBackend/tree/main)
+
 ### Sign Protocol
 Records all payment & receipt on chain, utilizes Sign Protocol to verify the authenticity of the receipt. And since lottery ticket is generated based on that payment receipt, it also verifies the authenticity of the lottery ticket.
 
