@@ -12,7 +12,7 @@ import TicketDisplay from '@/components/TicketDisplay';
 import Fireworks from '@/components/Fireworks';
 
 const CountdownPage = () => {
-  const [drawingDate, setDrawingDate] = useState(new Date('2024-11-18T13:00:00'));
+  const [drawingDate, setDrawingDate] = useState(new Date('2024-11-30T13:00:00'));
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
   const [isDrawing, setIsDrawing] = useState(false);
   const { address: userAddress, isConnected } = useAccount();
